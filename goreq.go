@@ -352,7 +352,9 @@ func (r Request) Do() (*Response, error) {
 	}
 
 	if transport, ok := transport.(*http.Transport); ok {
+		println("test1\n")
 		if r.Insecure {
+			println("test2\n")
 			if transport.TLSClientConfig != nil {
 				transport.TLSClientConfig.InsecureSkipVerify = true
 			} else {
