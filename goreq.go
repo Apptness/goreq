@@ -6,6 +6,7 @@ import (
 	"compress/gzip"
 	"compress/zlib"
 	"crypto/tls"
+	"crypto/x509"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -353,10 +354,16 @@ func (r Request) Do() (*Response, error) {
 
 	if transport, ok := transport.(*http.Transport); ok {
 		if r.Insecure {
+			// VerifyPeerCertificate func(rawCerts [][]byte, verifiedChains [][]*x509.Certificate) error
+			fn := func(rawCerts [][]byte, verifiedChains [][]*x509.Certificate) error {
+				return nil
+			}
 			if transport.TLSClientConfig != nil {
 				transport.TLSClientConfig.InsecureSkipVerify = true
+				transport.TLSClientConfig.VerifyPeerCertificate = fn
 			} else {
 				transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+				transport.TLSClientConfig.VerifyPeerCertificate = fn
 			}
 		} else if transport.TLSClientConfig != nil {
 			// the default TLS client (when transport.TLSClientConfig==nil) is
